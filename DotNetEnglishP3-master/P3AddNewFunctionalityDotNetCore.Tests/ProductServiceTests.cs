@@ -25,7 +25,7 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
         static OrderRepository orderRepositoryInstance = new OrderRepository(_context);
 
         [Fact]
-        public void CheckProductModelErrors_ValidProduct_ReturnsEmptyList()
+        public void CheckProductModelErrors_ValidProduct()
         {
             var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
@@ -41,56 +41,249 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
                     localizer  // Mock or real IStringLocalizer<ProductService> instance
                 );
 
-            var product = new ProductViewModel
-            {
-                // Set the properties of a valid ProductViewModel
-                // For example:
-                Name = "i",
-                Price = "10.00",
+            var validProduct = new ProductViewModel
+            {              
+                Name = "Name",
+                Price = "100",
                 Stock = "100",
                 Description = "Valid description",
                 Details = "Valid details"
             };
-            var testResult=productService.CheckProductModelErrors( product );
 
-            
+            // Assert          
+            ////Valid Product
+            Assert.Empty(productService.CheckProductModelErrors(validProduct));
 
+
+        }
+        [Fact]
+        public void CheckProductModelErrors_MissingName()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
+
+
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
+
+            var missingName = new ProductViewModel
+            {
+                Name = "",
+                Price = "1000",
+                Stock = "100",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+          
+            //// Missing Name
+            Assert.Single(productService.CheckProductModelErrors(missingName));
+            Assert.Equal("MissingName", productService.CheckProductModelErrors(missingName)[0]);
            
-            
+        }
 
-         //   var validationResults = new List<ValidationResult>();
-       //     var validationContext = new ValidationContext(productViewModel);
-            // Mock the behavior of Validator.TryValidateObject
-       //     var validatorMock = new Mock<IValidator>();
-        //    validatorMock.Setup(v => v.TryValidateObject(
-         //       It.IsAny<object>(),
-          //      It.IsAny<ValidationContext>(),
-           //     It.IsAny<ICollection<ValidationResult>>(),
-            //    It.IsAny<bool>()))
-           //     .Callback((object obj, ValidationContext ctx, ICollection<ValidationResult> results, bool validateAllProperties) =>
-            //    {
-                    // Manually add a ValidationResult for a valid object
-             //       results.Add(new ValidationResult("Valid", new string[] { }));
-          //      });
+        [Fact]
+        public void CheckProductModelErrors_MissingPrice()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
 
-            // Inject the mocked IValidator
-        //    productService.SetValidator(validatorMock.Object);
 
-            // Act
-          //  var errors = productService.CheckProductModelErrors(productViewModel);
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
 
-            // Assert
-            Assert.Empty(testResult) ;
+         
+            var missingPrice = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "",
+                Stock = "100",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+           
+            ///// Missing Price
+            Assert.Single(productService.CheckProductModelErrors(missingPrice));
+            Assert.Equal("MissingPrice", productService.CheckProductModelErrors(missingPrice)[0]);
+           
+        }
+
+        [Fact]
+        public void CheckProductModelErrors_PriceNotANumber()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
+
+
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
+
+          
+            var priceNotANumber = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "ZZZ",
+                Stock = "100",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+          
+          
+            ////Price Not a Number
+            Assert.Single( productService.CheckProductModelErrors(priceNotANumber));
+            Assert.Equal("PriceNotANumber", productService.CheckProductModelErrors(priceNotANumber)[0]);           
+        }
+
+        [Fact]
+        public void CheckProductModelErrors_PriceNotGreaterThanZero()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
+
+         
+            var priceNotGreaterThanZero = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "-1000",
+                Stock = "100",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+
+            // Assert          
+           
+            ////Price Not Greter Than Zero
+            Assert.Single(productService.CheckProductModelErrors(priceNotGreaterThanZero));
+            Assert.Equal("PriceNotGreaterThanZero", productService.CheckProductModelErrors(priceNotGreaterThanZero)[0]);
+        }
+
+        [Fact]
+        public void CheckProductModelErrors_MissingQuantity()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
+
+
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
+
+
+            var missingQuantity = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "100",
+                Stock = "",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+
+            ///// Missing Price
+            Assert.Single(productService.CheckProductModelErrors(missingQuantity));
+            Assert.Equal("MissingQuantity", productService.CheckProductModelErrors(missingQuantity)[0]);
 
         }
 
+        [Fact]
+        public void CheckProductModelErrors_QuantityNotAnInteger()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
 
 
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
 
 
+            var quantityNotAnInteger = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "100",
+                Stock = "1.5",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+
+            ///// Missing Price
+            Assert.Single(productService.CheckProductModelErrors(quantityNotAnInteger));
+            Assert.Equal("QuantityNotAnInteger", productService.CheckProductModelErrors(quantityNotAnInteger)[0]);
+
+        }
+
+        [Fact]
+        public void CheckProductModelErrors_QuantityNotGreaterThanZero()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
 
 
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
 
+
+            var quantityNotGreaterThanZero = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "100",
+                Stock = "-15",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+
+            ///// Missing Price
+            Assert.Single(productService.CheckProductModelErrors(quantityNotGreaterThanZero));
+            Assert.Equal("QuantityNotGreaterThanZero", productService.CheckProductModelErrors(quantityNotGreaterThanZero)[0]);
+
+        }
     }
 }
         
