@@ -30,7 +30,6 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
             var localizer = new StringLocalizer<ProductService>(factory);
-
             Cart cartInstance = new Cart();
 
 
@@ -42,16 +41,22 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
                     localizer  // Mock or real IStringLocalizer<ProductService> instance
                 );
 
-            var productViewModel = new ProductViewModel
+            var product = new ProductViewModel
             {
                 // Set the properties of a valid ProductViewModel
                 // For example:
-                Name = "Valid Product",
+                Name = "i",
                 Price = "10.00",
                 Stock = "100",
                 Description = "Valid description",
                 Details = "Valid details"
             };
+            var testResult=productService.CheckProductModelErrors( product );
+
+            
+
+           
+            
 
          //   var validationResults = new List<ValidationResult>();
        //     var validationContext = new ValidationContext(productViewModel);
@@ -75,7 +80,7 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
           //  var errors = productService.CheckProductModelErrors(productViewModel);
 
             // Assert
-            Assert.Equal("Valid Product", productViewModel.Name) ;
+            Assert.Empty(testResult) ;
 
         }
 
