@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Mvc.ModelBinding;
 
@@ -38,15 +39,13 @@ namespace P3AddNewFunctionalityDotNetCore.Models.ViewModels
                     return ValidationResult.Success;
                 }
 
-                // Validate the format using a regex
                 var regex = new Regex(@"^-?[0-9]+([,.][0-9]+)?$");
                 if (!regex.IsMatch(value as string))
                 {
                     return new ValidationResult("PriceNotANumber");
                 }
-
-                // Check if it's greater than or equal to zero
-                if (decimal.TryParse(value as string, out decimal numericValue) && numericValue >= 0.01m)
+              
+                if (double.TryParse(value as string, NumberStyles.Any, CultureInfo.InvariantCulture, out double numericValue)  && numericValue >= 0.01)
                 {
                     return ValidationResult.Success;
                 }
@@ -63,19 +62,19 @@ namespace P3AddNewFunctionalityDotNetCore.Models.ViewModels
                 return ValidationResult.Success;
             }
 
-            if (int.TryParse(value as string, out int intValue))
+            var regex = new Regex(@"^-?[0-9]+([,.][0]+)?$");
+            if (!regex.IsMatch(value as string))
             {
-                if (intValue >= 0)
-                {
-                    return ValidationResult.Success; // Valid positive integer
-                }
-                else
-                {
-                    return new ValidationResult("QuantityNotGreaterThanZero");
-                }
+                return new ValidationResult("QuantityNotAnInteger");
             }
 
-            return new ValidationResult("QuantityNotAnInteger");
+            if (double.TryParse(value as string, NumberStyles.Any, CultureInfo.InvariantCulture, out double numericValue) && numericValue >= 0.01)
+            {
+                return ValidationResult.Success;
+            }
+
+            return new ValidationResult("QuantityNotGreaterThanZero");
+
         }
     }
 

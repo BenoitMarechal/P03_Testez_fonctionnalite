@@ -20,12 +20,48 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
 {
     public class ProductServiceTests
     {
+        
         private static P3Referential _context;
         static ProductRepository productRepositoryInstance = new ProductRepository(_context);
         static OrderRepository orderRepositoryInstance = new OrderRepository(_context);
 
+
+      //  CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
+
         [Fact]
         public void CheckProductModelErrors_ValidProduct()
+        {// Arrange
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
+
+
+            
+            var productService = new ProductService(
+                    cartInstance,  
+                    productRepositoryInstance, 
+                    orderRepositoryInstance, 
+                    localizer  
+                );
+
+            var validProduct = new ProductViewModel
+            {              
+                Name = "Name",
+                Price = "100",
+                Stock = "5",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+
+            // Assert          
+            ////Valid Product
+            Assert.Empty(productService.CheckProductModelErrors(validProduct));
+
+
+        }
+        [Fact]
+        public void CheckProductModelErrors_ValidProductCommaSeparator()
         {
             var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
@@ -42,10 +78,42 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
                 );
 
             var validProduct = new ProductViewModel
-            {              
+            {
                 Name = "Name",
-                Price = "100",
-                Stock = "100",
+                Price = "100,5",
+                Stock = "5,0",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+
+            // Assert          
+            ////Valid Product
+            Assert.Empty(productService.CheckProductModelErrors(validProduct));
+
+
+        }
+        [Fact]
+        public void CheckProductModelErrors_ValidProductDotSeparator()
+        {
+            var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
+            var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
+            var localizer = new StringLocalizer<ProductService>(factory);
+            Cart cartInstance = new Cart();
+
+
+            // Arrange
+            var productService = new ProductService(
+                    cartInstance,  // Mock or real ICart instance
+                    productRepositoryInstance,  // Mock or real IProductRepository instance
+                    orderRepositoryInstance,  // Mock or real IOrderRepository instance
+                    localizer  // Mock or real IStringLocalizer<ProductService> instance
+                );
+
+            var validProduct = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "100.5",
+                Stock = "5.0",
                 Description = "Valid description",
                 Details = "Valid details"
             };
@@ -153,7 +221,9 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             Assert.Single( productService.CheckProductModelErrors(priceNotANumber));
             Assert.Equal("PriceNotANumber", productService.CheckProductModelErrors(priceNotANumber)[0]);           
         }
-
+        /// <summary>
+        /// TODO: ADD Not greater than zero with different separators
+        /// </summary>
         [Fact]
         public void CheckProductModelErrors_PriceNotGreaterThanZero()
         {
@@ -173,7 +243,7 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             var priceNotGreaterThanZero = new ProductViewModel
             {
                 Name = "Name",
-                Price = "-1000",
+                Price = "-1000.5",
                 Stock = "100",
                 Description = "Valid description",
                 Details = "Valid details"
@@ -254,14 +324,14 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
 
         [Fact]
         public void CheckProductModelErrors_QuantityNotGreaterThanZero()
-        {
+        {  // Arrange
             var options = Options.Create(new LocalizationOptions { ResourcesPath = "Resources" });
             var factory = new ResourceManagerStringLocalizerFactory(options, NullLoggerFactory.Instance);
             var localizer = new StringLocalizer<ProductService>(factory);
             Cart cartInstance = new Cart();
 
 
-            // Arrange
+          
             var productService = new ProductService(
                     cartInstance,  // Mock or real ICart instance
                     productRepositoryInstance,  // Mock or real IProductRepository instance
