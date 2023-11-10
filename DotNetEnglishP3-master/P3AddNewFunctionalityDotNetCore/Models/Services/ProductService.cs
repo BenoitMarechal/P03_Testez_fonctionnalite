@@ -41,12 +41,14 @@ namespace P3AddNewFunctionalityDotNetCore.Models.Services
                 products.Add(new ProductViewModel
                 {
                     Id = product.Id,
-                    Stock = product.Quantity.ToString(),
-                    Price = product.Price.ToString(CultureInfo.InvariantCulture),
+                    //Stock = product.Quantity.ToString(),
+                    Stock = product.Quantity,
+                    //Price = product.Price.ToString(CultureInfo.InvariantCulture),
+                    Price = product.Price,
                     Name = product.Name,
                     Description = product.Description,
                     Details = product.Details
-                });
+                }); ;
             }
 
             return products;
@@ -116,8 +118,10 @@ namespace P3AddNewFunctionalityDotNetCore.Models.Services
             Product productEntity = new Product
             {
                 Name = product.Name,
-                Price = double.Parse(product.Price),
-                Quantity = Int32.Parse(product.Stock),
+                //Price = double.Parse(product.Price),
+                Price = product.Price,
+                // Quantity = Int32.Parse(product.Stock),
+                Quantity = product.Stock,
                 Description = product.Description,
                 Details = product.Details
             };
