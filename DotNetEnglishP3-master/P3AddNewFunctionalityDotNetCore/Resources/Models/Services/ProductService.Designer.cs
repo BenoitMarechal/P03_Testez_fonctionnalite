@@ -99,6 +99,15 @@ namespace P3AddNewFunctionalityDotNetCore.Resources.Models.Services {
         /// <summary>
         ///   Looks up a localized string similar to .
         /// </summary>
+        public static string PriceNotAPositiveNumber {
+            get {
+                return ResourceManager.GetString("PriceNotAPositiveNumber", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
         public static string PriceNotGreaterThanZero {
             get {
                 return ResourceManager.GetString("PriceNotGreaterThanZero", resourceCulture);
@@ -111,6 +120,15 @@ namespace P3AddNewFunctionalityDotNetCore.Resources.Models.Services {
         public static string StockNotAnInteger {
             get {
                 return ResourceManager.GetString("StockNotAnInteger", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to .
+        /// </summary>
+        public static string StockNotAPositiveInteger {
+            get {
+                return ResourceManager.GetString("StockNotAPositiveInteger", resourceCulture);
             }
         }
         

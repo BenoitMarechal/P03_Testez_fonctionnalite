@@ -129,10 +129,16 @@
   <data name="PriceNotANumber" xml:space="preserve">
     <value />
   </data>
+  <data name="PriceNotAPositiveNumber" xml:space="preserve">
+    <value />
+  </data>
   <data name="PriceNotGreaterThanZero" xml:space="preserve">
     <value />
   </data>
   <data name="StockNotAnInteger" xml:space="preserve">
+    <value />
+  </data>
+  <data name="StockNotAPositiveInteger" xml:space="preserve">
     <value />
   </data>
   <data name="StockNotGreaterThanZero" xml:space="preserve">
