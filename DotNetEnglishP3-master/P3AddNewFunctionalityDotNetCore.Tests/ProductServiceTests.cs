@@ -22,9 +22,9 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
     public class ProductServiceTests
     {
         
-        private static P3Referential _context;
-        static ProductRepository productRepositoryInstance = new ProductRepository(_context);
-        static OrderRepository orderRepositoryInstance = new OrderRepository(_context);        
+       // private static P3Referential _context;
+       // static ProductRepository productRepositoryInstance = new ProductRepository(_context);
+       // static OrderRepository orderRepositoryInstance = new OrderRepository(_context);        
 
         static List<string> validityResult(ProductViewModel product)
         {
