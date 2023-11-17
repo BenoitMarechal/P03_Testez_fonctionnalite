@@ -26,7 +26,7 @@ namespace P3AddNewFunctionalityDotNetCore.Models.ViewModels
         public string Stock { get; set; }
 
 
-        [Required(ErrorMessage = "MissingPrice")]
+        [Required(ErrorMessageResourceName = "MissingPrice", ErrorMessageResourceType = typeof(Resources.Models.Services.ProductService))]
         [RegularExpression(@"^\s*[1-9]\d*([,.]\d+)?\s*$", ErrorMessageResourceName = "PriceNotAPositiveNumber", ErrorMessageResourceType = typeof(Resources.Models.Services.ProductService))]
 
         public string Price { get; set; }
