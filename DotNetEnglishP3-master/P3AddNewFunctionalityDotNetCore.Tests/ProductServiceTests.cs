@@ -21,10 +21,6 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
 {
     public class ProductServiceTests
     {
-        
-       // private static P3Referential _context;
-       // static ProductRepository productRepositoryInstance = new ProductRepository(_context);
-       // static OrderRepository orderRepositoryInstance = new OrderRepository(_context);        
 
         static List<string> validityResult(ProductViewModel product)
         {
@@ -41,11 +37,7 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             );
           return  productService.CheckProductModelErrors(product);
         }
-
-
-        //  CultureInfo.CurrentUICulture = new CultureInfo("en-GB");
-            
-
+       
         [Fact]
         public void CheckProductModelErrors_ValidProduct()
         {// Arrange
@@ -57,8 +49,11 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
                 Description = "Valid description",
                 Details = "Valid details"
             };
+            //Act
+            var result = validityResult(product);
             //Assert
-            Assert.Empty(validityResult(product));
+
+            Assert.Empty(result);
         }
         [Fact]
         public void CheckProductModelErrors_ValidProduct_BlankSpaces()
@@ -71,156 +66,145 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
                 Description = "Valid description",
                 Details = "Valid details"
             };
+            //Act
+            var result = validityResult(product);
             //Assert
-            Assert.Empty(validityResult(product));
+            Assert.Empty(result);
         }
-        [Fact]
-        public void CheckProductModelErrors_ValidProduct_PriceWithDotSeparator()
-        {// Arrange
-            var product = new ProductViewModel
-            {
-                Name = "Name",
-                Price = "100.5",
-                Stock = "5",
-                Description = "Valid description",
-                Details = "Valid details"
-            };
-            //Assert
-            Assert.Empty(validityResult(product));
-        }
-        [Fact]
-        public void CheckProductModelErrors_ValidProduct_PriceWithCommaSeparator()
+
+            [Fact]
+        public void CheckProductModelErrors_CommaSeparator()
         {// Arrange
             var product = new ProductViewModel
             {
                 Name = "Name",
                 Price = "100,5",
-                Stock = "5",
+                Stock = "5,5",
                 Description = "Valid description",
                 Details = "Valid details"
             };
+            //Act
+            var result = validityResult(product);
             //Assert
-            Assert.Empty(validityResult(product));
+            Assert.Single(result);
+            Assert.Contains("The stock must be a positive integer", result);
         }
         [Fact]
-        public void CheckProductModelErrors_AllErrorMessagesInFrench()
+        public void CheckProductModelErrors_DotSeparator()
+        {// Arrange
+            var product = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "100.5",
+                Stock = "5.5",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+            //Act
+            var result = validityResult(product);
+            //Assert
+            Assert.Single(result);
+            Assert.Contains("The stock must be a positive integer", result);
+        }
+
+        [Fact]
+        public void CheckProductModelErrors_MissingData()
+        {
+            var product = new ProductViewModel
+            {
+                Name = "",
+                Price = "",
+                Stock = "",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+            //Act
+            var result = validityResult(product);
+            //Assert
+            Assert.Equal(3, result.Count);
+            Assert.Contains("Please enter a name", result);
+            Assert.Contains("Please enter a price", result);
+            Assert.Contains("Please enter a stock value", result);          
+            
+        }
+       
+        [Fact]
+        public void CheckProductModelErrors_NegativePriceAndStock()
+        {
+            var product = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "-100",
+                Stock = "-5",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+            //Act
+            var result = validityResult(product);
+            //Assert
+            Assert.Equal(2, result.Count);    
+            Assert.Contains("The stock must be a positive integer", result);
+            Assert.Contains("The price must be a positive number", result);
+        }
+        [Fact]
+        public void CheckProductModelErrors_InvalidPriceAndStock()
+        {
+            var product = new ProductViewModel
+            {
+                Name = "Name",
+                Price = "e5",
+                Stock = "abc",
+                Description = "Valid description",
+                Details = "Valid details"
+            };
+            //Act
+            var result = validityResult(product);
+            //Assert
+            Assert.Equal(2, result.Count);
+            Assert.Contains("The stock must be a positive integer", result);
+            Assert.Contains("The price must be a positive number", result);
+        }             
+             
+        [Fact]
+        public void CheckProductModelErrors_MissingDataInFrench()
         {
             CultureInfo.CurrentUICulture = new CultureInfo("fr-FR");
             var product = new ProductViewModel
             {
                 Name = "",
-                Price = "-100.5",
-                Stock = "-5",
+                Price = "",
+                Stock = "",
                 Description = "",
                 Details = ""
             };
+            //Act
+            var result = validityResult(product);
             //Assert
-            Assert.Equal(3, validityResult(product).Count);
-            Assert.Contains("Veuillez saisir un nom", validityResult(product));
-            Assert.Contains("Le stock doit être un entier positif", validityResult(product));
-            Assert.Contains("Le prix doit être un nombre positif", validityResult(product));
+            Assert.Equal(3, result.Count);
+            Assert.Contains("Veuillez saisir un nom", result);
+            Assert.Contains("Veuillez saisir un prix", result);
+            Assert.Contains("Veuillez saisir une quantité", result);          
         }
-
         [Fact]
-        public void CheckProductModelErrors_MissingStock()
+        public void CheckProductModelErrors_InvalidDataInFrench()
         {
+            CultureInfo.CurrentUICulture = new CultureInfo("fr-FR");
             var product = new ProductViewModel
             {
                 Name = "Name",
-                Price = "100.5",
-                Stock = "",
-                Description = "Valid description",
-                Details = "Valid details"
+                Price = "price",
+                Stock = "-10.5",
+                Description = "",
+                Details = ""
             };
+            //Act
+            var result = validityResult(product);
             //Assert
-            Assert.Single(validityResult(product));
-            Assert.Contains("Please enter a stock value", validityResult(product));          
+            Assert.Equal(2, result.Count);
+            Assert.Contains("Le stock doit être un entier positif", result);
+            Assert.Contains("Le prix doit être un nombre positif", result);
            
         }
-        [Fact]
-        public void CheckProductModelErrors_MissingName()
-        {
-            var product = new ProductViewModel
-            {
-                Name = "",
-                Price = "100.5",
-                Stock = "5",
-                Description = "Valid description",
-                Details = "Valid details"
-            };
-            //Assert
-            Assert.Single(validityResult(product));
-            Assert.Contains("Please enter a name", validityResult(product));
-
-        }
-
-
-        [Fact]
-        public void CheckProductModelErrors_PriceNotGreaterThanZero()
-        {
-            var product = new ProductViewModel
-            {
-                Name = "Name",
-                Price = "-100.5",
-                Stock = "5",
-                Description = "Valid description",
-                Details = "Valid details"
-            };
-            //Assert
-            Assert.Single(validityResult(product));
-            Assert.Contains("The price must be a positive number", validityResult(product));
-        }
-        [Fact]
-        public void CheckProductModelErrors_QuantityNotGreaterThanZero()
-        {  // Arrange
-            var product = new ProductViewModel
-            {
-                Name = "Name",
-                Price = "100.5",
-                Stock = "-1",
-                Description = "Valid description",
-                Details = "Valid details"
-            };
-            //Assert
-            Assert.Single(validityResult(product));
-            Assert.Contains("The stock must be a positive integer", validityResult(product));
-
-        }
-        [Fact]
-        public void CheckProductModelErrors_MissingName_NegativePrice_InvalidStock()
-        {  // Arrange
-            var product = new ProductViewModel
-            {
-                Name = "",
-                Price = "-100.5",
-                Stock = "-kjh",
-                Description = "Valid description",
-                Details = "Valid details"
-            };
-            //Assert
-            Assert.Equal(3,validityResult(product).Count);
-            Assert.Contains("Please enter a name", validityResult(product));
-            Assert.Contains("The price must be a positive number", validityResult(product));
-            Assert.Contains("The stock must be a positive integer", validityResult(product));
-
-        }
-       
-        [Fact]
-        public void CheckProductModelErrors_PriceNotGreaterThanZero_DotSeparator()
-        {
-            var product = new ProductViewModel
-            {            
-                Name = "Name",
-                Price = "100.5",
-                Stock ="5",
-                Description = "Valid description",
-                Details = "Valid details"
-            };
-            //Assert
-            Assert.Empty(validityResult(product));
-         ///   Assert.Single(validityResult(product));
-          //  Assert.Contains("The price must be a positive number", validityResult(product));
-        }    
     }
 }
         

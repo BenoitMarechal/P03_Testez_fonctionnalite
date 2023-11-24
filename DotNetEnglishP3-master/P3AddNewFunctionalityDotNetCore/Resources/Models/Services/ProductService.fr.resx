@@ -124,7 +124,7 @@
     <value>Veuillez saisir un prix</value>
   </data>
   <data name="MissingStock" xml:space="preserve">
-    <value>Veuillez saisir un stock</value>
+    <value>Veuillez saisir une quantité</value>
   </data>
   <data name="PriceNotANumber" xml:space="preserve">
     <value>La valeur saisie pour le prix doit être un nombre</value>

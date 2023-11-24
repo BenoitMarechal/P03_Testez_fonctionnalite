@@ -70,8 +70,7 @@ namespace P3AddNewFunctionalityDotNetCore.Tests
             var product = await ctx.Product.Where(x => x.Name == "Product from DELETE integration test").FirstOrDefaultAsync();
             //Act
             productController.DeleteProduct(product.Id);
-            //ctx.Product.Remove(product);
-            //await ctx.SaveChangesAsync();         
+                 
             //Assert
             Assert.Equal(count , ctx.Product.Count());
            
